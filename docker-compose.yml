@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+    app:
+        build:
+            context: ./docker/php
+        container_name: coaster-app
+        volumes:
+            - ./app:/var/www/html
+        environment:
+            ENVIRONMENT: ${ENVIRONMENT}
+        depends_on:
+            - redis
+
+    nginx:
+        build:
+            context: ./docker/nginx
+        container_name: coaster-nginx
+        ports:
+            - "8080:80"
+        volumes:
+            - ./app:/var/www/html
+        depends_on:
+            - app
+
+    redis:
+        image: redis:7
+        container_name: coaster-redis
+        ports:
+            - "6379:6379"
