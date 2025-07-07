@@ -9,6 +9,7 @@ $routes->group('api', static function ($routes) {
     // Coasters
     $routes->post('coasters', '\\App\\UI\\Controllers\\CoasterController::create');
     $routes->get('coasters/(:segment)', '\\App\\UI\\Controllers\\CoasterController::view/$1');
+    $routes->put('coasters/(:segment)', '\\App\\UI\\Controllers\\CoasterController::update/$1');
 
     // Wagons
     $routes->post('coasters/(:segment)/wagons', '\\App\\UI\\Controllers\\WagonController::add/$1');

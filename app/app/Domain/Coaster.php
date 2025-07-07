@@ -13,7 +13,7 @@ class Coaster implements JsonSerializable
         private readonly string $id,
         private string          $personnel,
         private string          $clientsPerDay,
-        private string          $trackLength,
+        private readonly string $trackLength,
         private string          $hourFrom,
         private string          $hourTo,
         array                   $wagons = []
@@ -31,9 +31,19 @@ class Coaster implements JsonSerializable
         return $this->personnel;
     }
 
+    public function setPersonnel(string $personnel): void
+    {
+        $this->personnel = $personnel;
+    }
+
     public function getClientsPerDay(): string
     {
         return $this->clientsPerDay;
+    }
+
+    public function setClientsPerDay(string $clientsPerDay): void
+    {
+        $this->clientsPerDay = $clientsPerDay;
     }
 
     public function getTrackLength(): string
@@ -46,9 +56,19 @@ class Coaster implements JsonSerializable
         return $this->hourFrom;
     }
 
+    public function setHourFrom(string $hourFrom): void
+    {
+        $this->hourFrom = $hourFrom;
+    }
+
     public function getHourTo(): string
     {
         return $this->hourTo;
+    }
+
+    public function setHourTo(string $hourTo): void
+    {
+        $this->hourTo = $hourTo;
     }
 
     public function addWagon(Wagon $wagon): void
