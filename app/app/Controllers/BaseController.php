@@ -2,6 +2,9 @@
 
 namespace App\Controllers;
 
+use App\System\Exception\ValidationException;
+use App\System\Validator\DTOValidator;
+use App\System\Validator\ValidatableDTO;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
@@ -54,5 +57,45 @@ abstract class BaseController extends Controller
         // Preload any models, libraries, etc, here.
 
         // E.g.: $this->session = service('session');
+    }
+
+    protected function validateDto(string $dtoClass): ValidatableDTO|ResponseInterface
+    {
+        $data = $this->request->getJSON(true) ?? [];
+        /** @var DTOValidator $validator */
+        $validator = service('validator');
+
+        try {
+            return $validator->validate($data, $dtoClass);
+        } catch (ValidationException $e) {
+            return $this->createValidationErrorResponse($e->errors);
+        }
+    }
+
+    protected function response(mixed $data, int $statusCode = 200): ResponseInterface
+    {
+        return $this->response
+            ->setStatusCode($statusCode)
+            ->setJSON([
+                'status' => $statusCode === 200 ? 'success' : 'error',
+                'code' => $statusCode,
+                'data' => $data,
+            ]);
+    }
+
+    protected function createNotFoundResponse(string $message): ResponseInterface
+    {
+        return $this->response(['message' => $message], 404);
+    }
+
+    protected function createValidationErrorResponse(array $errors): ResponseInterface
+    {
+        return $this->response(
+            [
+                'message' => 'Validation failed',
+                'errors' => $errors,
+            ],
+            422
+        );
     }
 }
