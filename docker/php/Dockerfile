@@ -7,3 +7,9 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
+
+RUN mkdir -p writable/logs writable/cache writable/session
+RUN mkdir -p writable/logs/production
+RUN mkdir -p writable/logs/development
+RUN mkdir -p writable/logs/testing
+RUN chmod -R 777 writable/

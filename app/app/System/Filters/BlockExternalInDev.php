@@ -10,12 +10,12 @@ use Config\Services;
 
 class BlockExternalInDev implements FilterInterface
 {
-    public function before(RequestInterface $request, $arguments = null)
+    public function before(RequestInterface $request, $arguments = null): ?ResponseInterface
     {
         if (ENVIRONMENT === 'development') {
             $ip = $request->getIPAddress();
 
-            if (!in_array($ip, ['127.0.0.1', '::1'])) {
+            if (! $this->isAllowedIp($ip)) {
                 return Services::response()
                     ->setStatusCode(403)
                     ->setJSON([
@@ -30,5 +30,20 @@ class BlockExternalInDev implements FilterInterface
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
+    }
+
+    private function isAllowedIp(string $ip): bool
+    {
+        $allowed = ['127.0.0.1', '::1'];
+
+        if (in_array($ip, $allowed)) {
+            return true;
+        }
+
+        if (str_starts_with($ip, '192.168.')) {
+            return true;
+        }
+
+        return false;
     }
 }

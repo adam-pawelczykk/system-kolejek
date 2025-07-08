@@ -117,7 +117,7 @@ class Logger extends BaseConfig
              * By default, logs are written to WRITEPATH . 'logs/'
              * Specify a different destination here, if desired.
              */
-            'path' => '',
+            'path' => WRITEPATH . 'logs' . DIRECTORY_SEPARATOR . ENVIRONMENT . DIRECTORY_SEPARATOR,
         ],
 
         /*
@@ -147,4 +147,20 @@ class Logger extends BaseConfig
         //     'messageType' => 0,
         // ],
     ];
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $default = (ENVIRONMENT === 'production') ? 3 : 9;
+        $threshold = explode(',', env('logger.threshold') ?? '');
+
+        if (is_array($threshold)) {
+            $this->threshold = $threshold;
+        } elseif (is_numeric($threshold)) {
+            $this->threshold = (int) $threshold;
+        } else {
+            $this->threshold = $default;
+        }
+    }
 }
