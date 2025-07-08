@@ -20,7 +20,7 @@ class AddWagonHandler
         }
 
         foreach ($coaster->getWagons() as $wagon) {
-            if ($wagon->getId() === $command->getWagonId()) {
+            if ($wagon->getWagonId() === $command->getWagonId()) {
                 throw new InvalidArgumentException(
                     "Wagon {${$command->getWagonId()}} already exists"
                 );
@@ -29,7 +29,6 @@ class AddWagonHandler
 
         $wagon = new Wagon(
             $command->getWagonId(),
-            $command->getCoasterId(),
             $command->getDto()->numberOfSeats,
             $command->getDto()->wagonSpeed
         );

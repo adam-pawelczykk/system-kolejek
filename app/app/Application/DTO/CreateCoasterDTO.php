@@ -12,7 +12,8 @@ class CreateCoasterDTO implements ValidatableDTO
         public int    $clientsPerDay,
         public int    $trackLength,
         public string $hourFrom,
-        public string $hourTo
+        public string $hourTo,
+        public ?string $id = null
     ) {
     }
 
@@ -23,7 +24,8 @@ class CreateCoasterDTO implements ValidatableDTO
             (int)$data['liczba_klientow'],
             (int)$data['dl_trasy'],
             $data['godziny_od'],
-            $data['godziny_do']
+            $data['godziny_do'],
+            $data['id'] ?? null,
         );
     }
 
@@ -35,6 +37,7 @@ class CreateCoasterDTO implements ValidatableDTO
             'dl_trasy' => 'required|is_natural_no_zero',
             'godziny_od' => 'required|regex_match[/^\d{2}:\d{2}$/]',
             'godziny_do' => 'required|regex_match[/^\d{2}:\d{2}$/]',
+            'id' => 'permit_empty|alpha_dash|max_length[36]',
         ];
     }
 }

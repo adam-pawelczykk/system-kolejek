@@ -1,4 +1,5 @@
 <?php
+/** @author: Adam Pawełczyk */
 
 namespace App\UI\Controllers;
 
@@ -8,6 +9,7 @@ use App\Application\DTO\CreateCoasterDTO;
 use App\Application\DTO\UpdateCoasterDTO;
 use App\Controllers\BaseController;
 use App\Domain\CoasterRepository;
+use App\Domain\Service\CoasterDiagnosticService;
 use CodeIgniter\HTTP\ResponseInterface;
 
 /** @author: Adam Pawełczyk */
@@ -23,8 +25,10 @@ class CoasterController extends BaseController
             return $dto;
         }
 
+        $command = new CreateCoaster($dto, $dto->id);
+
         $commandBus = service('commandBus');
-        $commandBus->dispatch($command = new CreateCoaster($dto));
+        $commandBus->dispatch($command);
 
         return $this->response([
             'id' => $command->getCoasterId(),
@@ -68,5 +72,21 @@ class CoasterController extends BaseController
         }
 
         return $this->response($coaster);
+    }
+
+    public function diagnostic(string $coasterId): ResponseInterface
+    {
+        /** @var CoasterRepository $coasterRepository */
+        $coasterRepository = service('coasterRepository');
+
+        if (!$coaster = $coasterRepository->find($coasterId)) {
+            return $this->createNotFoundResponse("Kolejka o ID {$coasterId} nie istnieje");
+        }
+
+        /** @var CoasterDiagnosticService $coasterDiagnostic */
+        $coasterDiagnostic = service('coasterDiagnostic');
+        $report = $coasterDiagnostic->analyze($coaster);
+
+        return $this->response($report);
     }
 }

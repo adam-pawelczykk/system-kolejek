@@ -8,8 +8,9 @@ use App\System\Validator\ValidatableDTO;
 class WagonDTO implements ValidatableDTO
 {
     public function __construct(
-        public int   $numberOfSeats,
-        public float $wagonSpeed
+        public int     $numberOfSeats,
+        public float   $wagonSpeed,
+        public ?string $id = null
     ) {
     }
 
@@ -17,7 +18,8 @@ class WagonDTO implements ValidatableDTO
     {
         return new self(
             (int)$data['ilosc_miejsc'],
-            (float)$data['predkosc_wagonu']
+            (float)$data['predkosc_wagonu'],
+            $data['id'] ?? null
         );
     }
 
@@ -26,6 +28,7 @@ class WagonDTO implements ValidatableDTO
         return [
             'ilosc_miejsc' => 'required|is_natural_no_zero',
             'predkosc_wagonu' => 'required|decimal',
+            'id' => 'permit_empty|alpha_dash|max_length[36]',
         ];
     }
 }

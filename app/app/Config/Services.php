@@ -2,11 +2,10 @@
 
 namespace Config;
 
+use App\Domain\Service\CoasterDiagnosticService;
 use App\Infrastructure\Repository\RedisCoasterRepository;
 use App\System\Bus\CommandBus;
-use App\System\Bus\QueryBus;
 use App\System\Validator\DTOValidator;
-use App\Domain\CoasterRepository;
 use CodeIgniter\Config\BaseService;
 
 /**
@@ -42,15 +41,25 @@ class Services extends BaseService
         return new CommandBus();
     }
 
+    public static function redisPrefix(): string
+    {
+        $env = getenv('CI_ENVIRONMENT') ?: 'production';
+
+        return match ($env) {
+            'development' => 'dev',
+            default       => 'prod',
+        };
+    }
+
     public static function redis(?bool $getShared = true)
     {
         if ($getShared) {
             return static::getSharedInstance('redis');
         }
 
-        $host = env('REDIS_HOST', 'redis');
-        $port = env('REDIS_PORT', 6379);
-        $prefix = env('REDIS_PREFIX', '');
+        $host = getenv('REDIS_HOST') ?: 'redis';
+        $port = getenv('REDIS_PORT') ?: 6379;
+        $prefix = getenv('REDIS_PREFIX') ?: '';
 
         return new \Predis\Client([
             'scheme' => 'tcp',
@@ -60,12 +69,21 @@ class Services extends BaseService
         ]);
     }
 
-    public static function coasterRepository(bool $getShared = true)
+    public static function coasterRepository($getShared = true)
     {
         if ($getShared) {
             return static::getSharedInstance('coasterRepository');
         }
 
-        return new RedisCoasterRepository();
+        return new RedisCoasterRepository(static::redis());
+    }
+
+    public static function coasterDiagnostic(bool $getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('coasterDiagnostic');
+        }
+
+        return new CoasterDiagnosticService();
     }
 }

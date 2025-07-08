@@ -29,8 +29,10 @@ class WagonController extends BaseController
             return $dto;
         }
 
+        $command = new AddWagon($coaster->getId(), $dto, $dto->id);
+
         $commandBus = service('commandBus');
-        $commandBus->dispatch($command = new AddWagon($coaster->getId(), $dto));
+        $commandBus->dispatch($command);
 
         return $this->response([
             'id' => $command->getWagonId(),
