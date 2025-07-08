@@ -3,7 +3,9 @@
 
 namespace App\Domain\ValueObject;
 
-readonly class CoasterDiagnosticReport
+use JsonSerializable;
+
+readonly class CoasterDiagnosticReport implements JsonSerializable
 {
     public function __construct(
         public string          $coasterId,
@@ -27,5 +29,17 @@ readonly class CoasterDiagnosticReport
         $summary .= "Klienci: {$this->capacityStatus->summary()}" . PHP_EOL;
 
         return $summary;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'coasterId' => $this->coasterId,
+            'hourFrom' => $this->hourFrom,
+            'hourTo' => $this->hourTo,
+            'personnelStatus' => $this->personnelStatus,
+            'capacityStatus' => $this->capacityStatus,
+            'summary' => $this->summary(),
+        ];
     }
 }

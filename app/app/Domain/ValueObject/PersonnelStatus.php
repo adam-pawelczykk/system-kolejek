@@ -3,7 +3,9 @@
 
 namespace App\Domain\ValueObject;
 
-readonly class PersonnelStatus
+use JsonSerializable;
+
+readonly class PersonnelStatus implements JsonSerializable
 {
     public function __construct(
         // How many personnel are required
@@ -31,5 +33,17 @@ readonly class PersonnelStatus
         }
 
         return "Brakuje {$this->missing} pracowników ({$this->available}/{$this->required})";
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'required' => $this->required,
+            'available' => $this->available,
+            'missing' => $this->missing,
+            'excess' => $this->excess,
+            'sufficient' => $this->sufficient,
+            'summary' => $this->summary(),
+        ];
     }
 }

@@ -3,7 +3,9 @@
 
 namespace App\Domain\ValueObject;
 
-readonly class CapacityStatus
+use JsonSerializable;
+
+readonly class CapacityStatus implements JsonSerializable
 {
     public function __construct(
         public int  $expectedClients,
@@ -30,5 +32,17 @@ readonly class CapacityStatus
         }
 
         return "Nadmierna zdolność: +{$this->excessClients} klientów ({$this->maxPossibleClients}/{$this->expectedClients})";
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'expectedClients' => $this->expectedClients,
+            'maxPossibleClients' => $this->maxPossibleClients,
+            'missingClients' => $this->missingClients,
+            'excessClients' => $this->excessClients,
+            'sufficient' => $this->sufficient,
+            'summary' => $this->summary(),
+        ];
     }
 }
