@@ -76,6 +76,9 @@ class Coaster implements JsonSerializable
         $this->wagons[] = $wagon;
     }
 
+    /**
+     * @return Wagon[]
+     */
     public function getWagons(): array
     {
         return $this->wagons;

@@ -17,9 +17,10 @@
         "react/event-loop": "^1.5"
     },
     "require-dev": {
+        "codeigniter4/codeigniter4-standard": "^1.1",
         "fakerphp/faker": "^1.9",
         "mikey179/vfsstream": "^1.6",
-        "phpunit/phpunit": "^10.5.16"
+        "phpunit/phpunit": "^10"
     },
     "autoload": {
         "psr-4": {
